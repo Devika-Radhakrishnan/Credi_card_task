@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en" >
+  <head>
+    <meta charset="UTF-8">
+    <title>Credit Card Details</title>
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <form>
+      <div class="center card">
+        <div class="card-display">
+          <div class="card-box-inner">
+            <div class="card-box-front">
+              <div class="chip"></div>
+              <div class="cardnumber">
+                <div class="part-1"></div>
+                <div class="part-2"></div>
+                <div class="part-3"></div>
+                <div class="part-4"></div>
+              </div>
+              <div class="account-holder-name"></div>
+              <div class="expiry">
+                <div class="month"></div>
+                <div>/</div>
+                <div class="year"></div>
+              </div>
+            </div>
+            <div class="card-box-back">
+              <div class="plate"></div>
+              <div class="cvv">
+                <div class="code"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-input-box">
+          <div class="inputs">
+            <div class="input-group">
+              <div class="row">
+                <label for="">Card number</label>
+              </div>
+              <div class="row col-4 ">
+                <input class="field" id="card-number-1"  type="text" maxlength="4"> -
+                <input class="field"  id="card-number-2" type="text" maxlength="4"> -
+                <input class="field"  id="card-number-3" type="text" maxlength="4"> -
+                <input class="field"  id="card-number-4" type="text" maxlength="4">
+              </div>
+              <div class="result card-result" id="result"></div>
+            </div>
+            <div class="input-group">
+              <label for="">Account holder</label>
+              <input type="text" id="account-holder" maxlength="20">
+            </div>
+            <div class="input-group">
+              <div class="row col-2">
+                <div class="row">
+                  <label for="Expiry">Expiry</label>
+                  <div>
+                    <select id="expiry-month">
+                      <option value="01">01</option>
+                      <option value="02">02</option>
+                      <option value="03">03</option>
+                      <option value="04">04</option>
+                      <option value="05">05</option>
+                      <option value="06">06</option>
+                      <option value="07">07</option>
+                      <option value="08">08</option>
+                      <option value="09">09</option>
+                      <option value="10">10</option>
+                      <option value="11">11</option>
+                      <option value="12">12</option>
+                    </select>
+                    <select id="expiry-year">
+                      <option value="19">2019</option>
+                      <option value="20">2020</option>
+                      <option value="21">2021</option>
+                      <option value="22">2022</option>
+                      <option value="23">2023</option>
+                      <option value="24">2024</option>
+                      <option value="25">2025</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <label for="">CVV</label>
+                  <input type="text" id="cvv-code" maxlength="3">
+                </div>
+              </div>
+            </div>
+            <div class="input-group">
+              <button type="button" id="check">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <script type="text/javascript" src="form.js"></script>
+    <script>
+      class CreditCard{
+      constructor(inputObject){
+        //Safety check
+        if(typeof inputObject !== "object"){
+          console.log("Error in creating card object! Passed argument must be an object!");
+          return null;
+        }
+        else{
+          this.num = "";
+          this.chkNum = "";
+          
+          //Generate the input string
+          for(let inputField of inputObject){
+            this.num += inputField.value;
+          }
+      
+          //apply Luhn algorithm on card number
+          for( var j = 0; j < this.num.length; j++ ){
+            if( j % 2 === 0 ){
+              this.chkNum += this.luhn( this.num[j] );
+            }
+            else{
+              this.chkNum += this.num[j];
+            }
+          } //for end
+        } //else end
+      } //constructor end
+      
+      isValid(){
+        var sum = 0;
+        for(let number of this.chkNum){
+          sum += parseInt(number);
+        }
+        
+        return sum % 10 === 0;
+      }
+      
+      luhn(num){
+        if(typeof num !== "string"){
+          console.log("Card.prototype.luhn error: argument is not a string!");
+          return;
+        }
+        num = parseInt(num);
+        var checkNum = num * 2;
+        return checkNum > 9 ? checkNum - 9 : checkNum;
+      }
+      
+      printValidity(){
+        if(this.chkNum.length !== 16){
+          result.innerHTML = "Invalid input length.";
+        }
+        else if( this.isValid( this.chkNum ) ){
+          result.innerHTML = "Your card number is valid!";
+        } else{
+          result.innerHTML = "Your card number is invalid!";
+        }
+      };
+      }
+      
+      let btn = document.querySelector("#check");
+      btn.addEventListener("click", () => {
+      let fields = document.querySelectorAll(".field");
+      let result = document.getElementById( "result" );
+      
+      let card = new CreditCard(fields);
+      card.printValidity();
+      });
+      
+      
+      const fields = document.querySelectorAll(".field");
+      for(let field of fields){
+      field.addEventListener("keyup", function(){
+        if(field.value.length >= field.getAttribute("maxlength")){
+          field.nextElementSibling.focus();
+        }
+      });
+      }
+
+
+    </script>
+  </body>
+</html>
